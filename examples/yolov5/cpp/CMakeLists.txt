@@ -41,6 +41,8 @@ add_library(${PROJECT_NAME} SHARED
 	${rknpu_yolov5_file}
 )
 
+target_link_options(${PROJECT_NAME} PRIVATE -Wl,--no-undefined)
+
 set_target_properties(${PROJECT_NAME} PROPERTIES
         OUTPUT_NAME "od"
         PREFIX "lib"
