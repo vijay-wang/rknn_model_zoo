@@ -1,5 +1,7 @@
 #!/bin/bash
 
+GCC_COMPILER=/home/docker/share/repo/rknn/gcc-linaro-6.3.1-2017.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu
+
 set -e
 
 echo "$0 $@"
@@ -28,7 +30,7 @@ while getopts ":t:a:d:b:m:r:j" opt; do
       DISABLE_LIBJPEG=ON
       ;;
     :)
-      echo "Option -$OPTARG requires an argument." 
+      echo "Option -$OPTARG requires an argument."
       exit 1
       ;;
     ?)

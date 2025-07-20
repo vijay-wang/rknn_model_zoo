@@ -25,7 +25,7 @@
 #include "file_utils.h"
 #include "image_drawing.h"
 
-#if defined(RV1106_1103) 
+#if defined(RV1106_1103)
     #include "dma_alloc.hpp"
 #endif
 
@@ -60,9 +60,9 @@ int main(int argc, char **argv)
     memset(&src_image, 0, sizeof(image_buffer_t));
     ret = read_image(image_path, &src_image);
 
-#if defined(RV1106_1103) 
+#if defined(RV1106_1103)
     //RV1106 rga requires that input and output bufs are memory allocated by dma
-    ret = dma_buf_alloc(RV1106_CMA_HEAP_PATH, src_image.size, &rknn_app_ctx.img_dma_buf.dma_buf_fd, 
+    ret = dma_buf_alloc(RV1106_CMA_HEAP_PATH, src_image.size, &rknn_app_ctx.img_dma_buf.dma_buf_fd,
                        (void **) & (rknn_app_ctx.img_dma_buf.dma_buf_virt_addr));
     memcpy(rknn_app_ctx.img_dma_buf.dma_buf_virt_addr, src_image.virt_addr, src_image.size);
     dma_sync_cpu_to_device(rknn_app_ctx.img_dma_buf.dma_buf_fd);
@@ -104,7 +104,7 @@ int main(int argc, char **argv)
         draw_rectangle(&src_image, x1, y1, x2 - x1, y2 - y1, COLOR_BLUE, 3);
 
         sprintf(text, "%s %.1f%%", coco_cls_to_name(det_result->cls_id), det_result->prop * 100);
-        draw_text(&src_image, text, x1, y1 - 20, COLOR_RED, 10);
+        draw_text(&src_image, text, x1, y1 - 20, COLOR_RED, 32);
     }
 
     write_image("out.png", &src_image);
@@ -120,8 +120,8 @@ out:
 
     if (src_image.virt_addr != NULL)
     {
-#if defined(RV1106_1103) 
-        dma_buf_free(rknn_app_ctx.img_dma_buf.size, &rknn_app_ctx.img_dma_buf.dma_buf_fd, 
+#if defined(RV1106_1103)
+        dma_buf_free(rknn_app_ctx.img_dma_buf.size, &rknn_app_ctx.img_dma_buf.dma_buf_fd,
                 rknn_app_ctx.img_dma_buf.dma_buf_virt_addr);
 #else
         free(src_image.virt_addr);

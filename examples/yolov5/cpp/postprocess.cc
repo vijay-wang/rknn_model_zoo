@@ -447,7 +447,7 @@ static int process_fp32(float *input, int *anchor, int grid_h, int grid_w, int h
 
 int post_process(rknn_app_context_t *app_ctx, void *outputs, letterbox_t *letter_box, float conf_threshold, float nms_threshold, object_detect_result_list *od_results)
 {
-#if defined(RV1106_1103) 
+#if defined(RV1106_1103)
     rknn_tensor_mem **_outputs = (rknn_tensor_mem **)outputs;
 #else
     rknn_output *_outputs = (rknn_output *)outputs;
@@ -467,7 +467,7 @@ int post_process(rknn_app_context_t *app_ctx, void *outputs, letterbox_t *letter
     for (int i = 0; i < 3; i++)
     {
 
-#if defined(RV1106_1103) 
+#if defined(RV1106_1103)
         grid_h = app_ctx->output_attrs[i].dims[2];
         grid_w = app_ctx->output_attrs[i].dims[3];
         stride = model_in_h / grid_h;
@@ -565,6 +565,18 @@ int init_post_process()
     if (ret < 0)
     {
         printf("Load %s failed!\n", LABEL_NALE_TXT_PATH);
+        return -1;
+    }
+    return 0;
+}
+
+int init_post_process(const char *path)
+{
+    int ret = 0;
+    ret = loadLabelName(path, labels);
+    if (ret < 0)
+    {
+        printf("Load %s failed!\n", path);
         return -1;
     }
     return 0;

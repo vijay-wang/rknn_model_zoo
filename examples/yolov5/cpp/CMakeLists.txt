@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(rknn_yolov5_demo)
+project(od VERSION 1.0.0 LANGUAGES CXX)
+set(LIB_VERSION "1.0.0")
+set(LIB_SOVERSION 1)
 
 if (ENABLE_ASAN)
 	message(STATUS "BUILD WITH ADDRESS SANITIZER")
@@ -28,16 +30,35 @@ set(CMAKE_INSTALL_RPATH "$ORIGIN/lib")
 file(GLOB SRCS ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 
 
-add_executable(${PROJECT_NAME}
-    main.cc
-    postprocess.cc
-    ${rknpu_yolov5_file}
+#add_executable(${PROJECT_NAME}
+#    main.cc
+#    postprocess.cc
+#    ${rknpu_yolov5_file}
+#)
+add_library(${PROJECT_NAME} SHARED
+        libod.cc
+	postprocess.cc
+	${rknpu_yolov5_file}
+)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+        OUTPUT_NAME "od"
+        PREFIX "lib"
+        SUFFIX ".so"
+        VERSION ${LIB_VERSION}
+        SOVERSION ${LIB_SOVERSION}
+        PUBLIC_HEADER libod.h
+)
+
+target_include_directories(od PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
 )
 
 target_link_libraries(${PROJECT_NAME}
     imageutils
     fileutils
-    imagedrawing    
+    imagedrawing
     ${LIBRKNNRT}
     dl
 )
@@ -59,7 +80,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${LIBRKNNRT_INCLUDES}
 )
 
-install(TARGETS ${PROJECT_NAME} DESTINATION .)
+install(TARGETS od LIBRARY DESTINATION lib PUBLIC_HEADER DESTINATION include)
+#install(TARGETS ${PROJECT_NAME} DESTINATION .)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../model/bus.jpg DESTINATION ./model)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../model/coco_80_labels_list.txt DESTINATION ./model)
 file(GLOB RKNN_FILES "${CMAKE_CURRENT_SOURCE_DIR}/../model/*.rknn")
